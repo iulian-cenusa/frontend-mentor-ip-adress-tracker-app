@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- displays site properly based on user's device -->
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+
+  <title>Frontend Mentor | IP Address Tracker</title>
+
+  <!--LeafetJS part-->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+    crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+    integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+    crossorigin=""></script>
+
+  <!-- Feel free to remove these styles or customise in your own stylesheet 👍 -->
+  <style>
+    .attribution {
+      font-size: 0.75rem;
+      text-align: center;
+      padding: 1rem;
+    }
+
+    .attribution a {
+      color: white
+    }
+  </style>
+
+  <link rel="stylesheet" href="/css/style.css">
+
+</head>
+
+<body>
+
+  <main>
+
+    <div class="top">
+      <h1>IP Address Tracker</h1>
+
+      <div class="input-container">
+        <input id="IPInput" type="text" placeholder="Search for any IP address or domain">
+        <div class="input-button">
+          <img src="/images/icon-arrow.svg" alt="arrow icon pointing to the right" />
+        </div>
+      </div>
+
+      <div class="result">
+
+        <div class="result-element">
+          <h2 class="title">
+            IP Adress
+          </h2>
+          <p class="text">
+            <%= locals.ip || '0.0.0.0' %> 
+          </p>
+        </div>
+
+        <div class="result-element">
+          <h2 class="title">
+            Location
+          </h2>
+          <p class="text">
+            <%= locals.location || 'The World' %> 
+          </p>
+        </div>
+
+        <div class="result-element">
+          <h2 class="title">
+            Timezone
+          </h2>
+          <p class="text">
+            <%= locals.timezone || 'UTC +0:00' %> 
+          </p>
+        </div>
+
+        <div class="result-element">
+          <h2 class="title">
+            ISP
+          </h2>
+          <p class="text">
+            <%= locals.isp || 'Generic ISP' %> 
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div id="map">
+
+    </div>
+
+  </main>
+
+  <footer>
+    <div class="attribution">
+      <p>Challenge by <a href="https://www.frontendmentor.io?ref=challenge" target="_blank"> Frontend Mentor</a>
+        Coded by <a href="https://github.com/iulian-cenusa"> Iulian Cenuşă</a></p>
+    </div>
+  </footer>
+
+<% let latitude = locals.lat %>
+<% let longitude = locals.lon %>
+
+<script>
+  
+  // get page elements
+  let pageData = document.querySelectorAll('.text');
+  let inputBtn = document.querySelector('.input-button');
+  let inputData = document.querySelector('#IPInput');
+
+  inputBtn.addEventListener('click', async ()=>{
+    let data = await fetch(`/api?ip=${inputData.value}`)
+    let usableData = await data.json();
+    
+    pageData[0].innerHTML = usableData.ip
+    pageData[1].innerHTML = usableData.location
+    pageData[2].innerHTML = 'UTC ' + usableData.timezone
+    pageData[3].innerHTML = usableData.isp
+
+  })
+
+  // map part
+  const mymap = L.map("map").setView([<%= latitude  %>, <%= longitude  %>], 7);
+  const attribution =
+    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+  const tileUrl = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+  const tiles = L.tileLayer(tileUrl, { attribution });
+  tiles.addTo(mymap);
+
+</script>
+
+</body>
+
+</html>
