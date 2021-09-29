@@ -28,9 +28,8 @@ app.get('/', (req, res) =>{
     })
     .catch( (error) =>{
       // handle error
-      console.log(error);
+      //console.log(error);
     }).then( () =>{
-      console.log(context);
       res.render('index' , context);
     } );
   })
@@ -45,7 +44,6 @@ app.get('/api', (req, res) =>{
 
   let re = new RegExp(/^((?:(?:(?:\w[\.\-\+]?)*)\w)+)((?:(?:(?:\w[\.\-\+]?){0,62})\w)+)\.(\w{2,6})$/); 
   
-
   // check if send data is IP or domain
    if ( /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(req.query.ip)){
     //IP
@@ -55,10 +53,12 @@ app.get('/api', (req, res) =>{
       data.location = response.data.location.city + ', ' + response.data.location.country + ' ' + response.data.location.postalCode
       data.timezone = response.data.location.timezone
       data.isp = response.data.isp
+      data.lat = response.data.location.lat 
+      data.lon = response.data.location.lng
     })
     .catch( (error) =>{
       // handle error
-      console.log(error);
+      //console.log(error);
     }).then( () =>{
       res.json(data);
     } );
@@ -70,16 +70,16 @@ app.get('/api', (req, res) =>{
       data.location = response.data.location.city + ', ' + response.data.location.country + ' ' + response.data.location.postalCode
       data.timezone = response.data.location.timezone
       data.isp = response.data.isp
+      data.lat = response.data.location.lat 
+      data.lon = response.data.location.lng
     })
     .catch( (error) =>{
       // handle error
-      console.log(error);
+      //console.log(error);
     }).then( () =>{
       res.json(data);
     } );
    }
-
-
 
 })
 

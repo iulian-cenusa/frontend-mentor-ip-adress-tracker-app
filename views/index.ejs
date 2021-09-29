@@ -56,7 +56,7 @@
             IP Adress
           </h2>
           <p class="text">
-            <%= locals.ip || '0.0.0.0' %> 
+            <%= locals.ip || '0.0.0.0' %>
           </p>
         </div>
 
@@ -65,7 +65,7 @@
             Location
           </h2>
           <p class="text">
-            <%= locals.location || 'The World' %> 
+            <%= locals.location || 'The World' %>
           </p>
         </div>
 
@@ -74,7 +74,7 @@
             Timezone
           </h2>
           <p class="text">
-            <%= locals.timezone || 'UTC +0:00' %> 
+            <%= locals.timezone || 'UTC +0:00' %>
           </p>
         </div>
 
@@ -83,7 +83,7 @@
             ISP
           </h2>
           <p class="text">
-            <%= locals.isp || 'Generic ISP' %> 
+            <%= locals.isp || 'Generic ISP' %>
           </p>
         </div>
 
@@ -104,36 +104,73 @@
     </div>
   </footer>
 
-<% let latitude = locals.lat %>
-<% let longitude = locals.lon %>
+  <% let latitude=locals.lat %>
+    <% let longitude=locals.lon %>
 
-<script>
-  
-  // get page elements
-  let pageData = document.querySelectorAll('.text');
-  let inputBtn = document.querySelector('.input-button');
-  let inputData = document.querySelector('#IPInput');
+      <script>
 
-  inputBtn.addEventListener('click', async ()=>{
-    let data = await fetch(`/api?ip=${inputData.value}`)
-    let usableData = await data.json();
-    
-    pageData[0].innerHTML = usableData.ip
-    pageData[1].innerHTML = usableData.location
-    pageData[2].innerHTML = 'UTC ' + usableData.timezone
-    pageData[3].innerHTML = usableData.isp
+        // create the global map object
+        let map = L.map('map', {
+          center: [0, 0],
+          zoom: 2
+        });
 
-  })
+        // map variables
+        let initial = true; // if map is initally loaded or not
+        let markers = []    //  markers array
 
-  // map part
-  const mymap = L.map("map").setView([<%= latitude  %>, <%= longitude  %>], 7);
-  const attribution =
-    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
-  const tileUrl = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
-  const tiles = L.tileLayer(tileUrl, { attribution });
-  tiles.addTo(mymap);
+        createMap(<%=latitude %>, <%=longitude %>); // initalize the map
 
-</script>
+        // get page elements
+        let pageData = document.querySelectorAll('.text');
+        let inputBtn = document.querySelector('.input-button');
+        let inputData = document.querySelector('#IPInput');
+
+        inputBtn.addEventListener('click', async () => {
+          let data = await fetch(`/api?ip=${inputData.value}`)
+          let usableData = await data.json();
+
+          pageData[0].innerHTML = usableData.ip
+          pageData[1].innerHTML = usableData.location
+          pageData[2].innerHTML = 'UTC ' + usableData.timezone
+          pageData[3].innerHTML = usableData.isp
+
+          createMap(usableData.lat, usableData.lon)   // update the map
+
+        })
+
+        function createMap(latitude, longitude) {
+          if (initial) {
+            const mymap = map.setView([latitude, longitude], 6);
+            const attribution =
+              '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+            const tileUrl = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+            const tiles = L.tileLayer(tileUrl, { attribution });
+            tiles.addTo(mymap);
+            initial = false;
+          } else {
+            // set view of the map
+            const mymap = map.setView([latitude, longitude], 11);
+
+            // remove all markers from the map
+            for (let i = 0; i < markers.length; i++) {
+              map.removeLayer(markers[i]);
+            }
+
+            //define the map icon to be used 
+            var myIcon = L.icon({
+              iconUrl: '/images/icon-location.svg',
+              iconSize: [24, 32]
+            });
+
+            // add new marker and push it to markers array
+            const marker = L.marker([latitude, longitude], { icon: myIcon }).addTo(mymap);
+            markers.push(marker);
+          }
+
+        }
+
+      </script>
 
 </body>
 
