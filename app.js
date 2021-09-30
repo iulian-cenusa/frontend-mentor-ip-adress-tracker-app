@@ -12,6 +12,9 @@ app.use('/images', express.static("public/images"))
 // render engine configuration
 app.set('view engine', 'ejs')
 
+// port variable
+const port = 3000
+
 app.get('/', (req, res) =>{
 
   let context = {}
@@ -84,4 +87,4 @@ app.get('/api', (req, res) =>{
 })
 
 // start server
-app.listen(3000)
+app.listen(process.env.PORT || port )
