@@ -4,7 +4,8 @@
   "description": "Frontednmentor.io challange - IP adress map search and tracker app ",
   "main": "app.js",
   "scripts": {
-    "dev": "nodemon app"
+    "dev": "nodemon app",
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",
